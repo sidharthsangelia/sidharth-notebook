@@ -5,7 +5,7 @@ pubDate: 2025-08-07
 description: "A deep dive into minimalistic web design and how to implement it for clarity, elegance, and user-focused experiences."
 author: "Dev Insight"
 category: "design"
-tags: ["minimalism", "web design", "ui/ux", "accessibility", "clean design"]
+tags: ["minimalism", "web design", "ui", "ux", "accessibility", "clean design"]
 image:
   url: "https://images.unsplash.com/photo-1586527800536-abc2e9263152?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fG1pbmltYWxpc20lMjBpbiUyMHdlYiUyMGRlc2luZ3xlbnwwfHwwfHx8MA%3D%3D"
   alt: "Clean white desk with monitor and keyboard - representing minimal workspace"
