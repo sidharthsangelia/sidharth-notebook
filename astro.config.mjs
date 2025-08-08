@@ -2,13 +2,13 @@
 import { defineConfig } from 'astro/config';
 
 import preact from "@astrojs/preact";
-
+import sitemap from '@astrojs/sitemap';
 import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://sid-astro-blog-tut.vercel.app",
-  integrations: [preact()],
+  site: "https://sidharth-notebook.vercel.app",
+  integrations: [preact(),sitemap()],
 
   vite: {
     plugins: [tailwindcss()]
