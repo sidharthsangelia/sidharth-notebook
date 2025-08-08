@@ -10,7 +10,7 @@ const pageTitle = "Tags";
   <section class="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
     {tags.map((tag) => (
       <a
-        href={`/tags/${tag}`}
+        href={`/tags/${encodeURIComponent(tag)}/`}
         class="card group hover:shadow-md transition-shadow duration-200"
       >
         <div class="flex items-center justify-between">
