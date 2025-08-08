@@ -6,7 +6,7 @@ const allPosts = Object
   .values(import.meta.glob('./posts/*.md', { eager: true }))
   .sort((a, b) => new Date(b.frontmatter.pubDate) - new Date(a.frontmatter.pubDate));
 
-const pageTitle = "My Blog";
+const pageTitle = "Sidharth's Notebook | Blog";
 ---
 <BaseLayout pageTitle={pageTitle}>
   <p class="mb-6 text-[color:var(--muted-foreground)]">Sharing my thoughts, learnings, and experiments.</p>

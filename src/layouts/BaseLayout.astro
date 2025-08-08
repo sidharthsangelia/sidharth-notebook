@@ -12,12 +12,32 @@ const { pageTitle } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
+    <!-- HTML Meta Tags -->
+<title>Sidharth's Notebook</title>
+<meta name="description" content="A cozy corner of the internet where I document my learnings, share unfiltered thoughts, and explore the intersection of technology, life, and everything in between.">
+
+<!-- Facebook Meta Tags -->
+<meta property="og:url" content="https://sidharth-notebook.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sidharth's Notebook">
+<meta property="og:description" content="A cozy corner of the internet where I document my learnings, share unfiltered thoughts, and explore the intersection of technology, life, and everything in between.">
+<meta property="og:image" content="https://opengraph.b-cdn.net/production/images/7f9b0b8c-2d72-425b-9edb-22d0015e9695.png?token=F8dBy3xdjPpvoG3eTcsl4CsyH4cXT7N3LAcu14QmhvI&height=548&width=1200&expires=33290643741">
+
+<!-- Twitter Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta property="twitter:domain" content="sidharth-notebook.vercel.app">
+<meta property="twitter:url" content="https://sidharth-notebook.vercel.app/">
+<meta name="twitter:title" content="Sidharth's Notebook">
+<meta name="twitter:description" content="A cozy corner of the internet where I document my learnings, share unfiltered thoughts, and explore the intersection of technology, life, and everything in between.">
+<meta name="twitter:image" content="https://opengraph.b-cdn.net/production/images/7f9b0b8c-2d72-425b-9edb-22d0015e9695.png?token=F8dBy3xdjPpvoG3eTcsl4CsyH4cXT7N3LAcu14QmhvI&height=548&width=1200&expires=33290643741">
+
+<!-- Meta Tags Generated via https://www.opengraph.xyz -->
     
     <title>{pageTitle}</title>
   </head>
   <body>
     <Header />
-    <h1>{pageTitle}</h1>
+  
        <slot />
     <Footer />
     <script>
