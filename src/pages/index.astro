@@ -1,16 +1,306 @@
 ---
+import BlogPost from '../components/BlogPost.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
+const pageTitle = "Home Page";
+
+// Get all blog posts, sorted by date
+const allPosts = Object
+  .values(import.meta.glob('./posts/*.md', { eager: true }))
+  .sort((a, b) => new Date(b.frontmatter.pubDate) - new Date(a.frontmatter.pubDate));
+
+// Get featured post (most recent)
+const featuredPost = allPosts[0];
+
+// Get recent posts (excluding featured)
+const recentPosts = allPosts.slice(1, 7);
+
+// Get posts by series/categories
+const seriesPosts = {
+  '1am-thoughts': allPosts.filter(post => post.frontmatter.tags?.includes('1am-thoughts')).slice(0, 3),
+  'code-diary': allPosts.filter(post => post.frontmatter.tags?.includes('code-diary')).slice(0, 3),
+  'week-notes': allPosts.filter(post => post.frontmatter.tags?.includes('what-i-saw-this-week')).slice(0, 3)
+};
+
+// Popular tags
+const allTags = allPosts.flatMap(post => post.frontmatter.tags || []);
+const tagCounts = allTags.reduce((acc, tag) => {
+  acc[tag] = (acc[tag] || 0) + 1;
+  return acc;
+}, {});
+const popularTags = Object.entries(tagCounts)
+  .sort(([,a], [,b]) => b - a)
+  .slice(0, 8);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout >
+  <main class="min-h-screen">
+    
+    <!-- Hero Section -->
+    <section class="py-6 lg:py-14">
+      <div class="max-w-4xl">
+        <h1 class="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
+          Digital notebook for
+          <span class="block text-[color:var(--muted-foreground)] italic">thoughts, code & life</span>
+        </h1>
+        <p class="text-lg lg:text-xl text-[color:var(--muted-foreground)] mb-8 leading-relaxed max-w-3xl">
+          A cozy corner of the internet where I document my learnings, share unfiltered thoughts, 
+          and explore the intersection of technology, life, and everything in between.
+        </p>
+        <div class="flex flex-wrap gap-4 items-center">
+          <a href="/blog" class="text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">
+            Browse All Posts →
+          </a>
+          <a href="/tags" class="text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">
+            Explore by Tags →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Post -->
+    {featuredPost && (
+      <section class="py-12">
+        <div class="mb-8">
+          <h2 class="text-2xl lg:text-3xl font-bold mb-2">Latest</h2>
+          <div class="w-12 h-0.5 bg-[color:var(--border)]"></div>
+        </div>
+        
+        <article class="grid lg:grid-cols-5 gap-8 lg:gap-12">
+          <div class="lg:col-span-3 order-2 lg:order-1">
+            <div class="flex flex-wrap gap-2 mb-4">
+              {featuredPost.frontmatter.tags?.slice(0, 2).map((tag) => (
+                <a href={`/tags/${tag}`} class="px-3 py-1 bg-[color:var(--secondary)] text-[color:var(--secondary-foreground)] text-sm rounded-full hover:bg-[color:var(--accent)] transition-colors">
+                  #{tag}
+                </a>
+              ))}
+            </div>
+            
+            <h3 class="text-2xl lg:text-4xl font-bold mb-4 leading-tight">
+              <a href={featuredPost.url} class="hover:text-[color:var(--muted-foreground)] transition-colors">
+                {featuredPost.frontmatter.title}
+              </a>
+            </h3>
+            
+            <p class="text-lg text-[color:var(--muted-foreground)] mb-6 leading-relaxed">
+              {featuredPost.frontmatter.description}
+            </p>
+            
+            <div class="flex items-center gap-4 text-sm text-[color:var(--muted-foreground)] mb-6">
+              <time>{new Date(featuredPost.frontmatter.pubDate).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}</time>
+              {featuredPost.frontmatter.readingTime && (
+                <>
+                  <span>•</span>
+                  <span>{featuredPost.frontmatter.readingTime}</span>
+                </>
+              )}
+            </div>
+            
+            <a href={featuredPost.url} class="inline-flex items-center text-[color:var(--foreground)] hover:text-[color:var(--muted-foreground)] font-medium transition-colors">
+              Read Post
+              <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+              </svg>
+            </a>
+          </div>
+          
+          {featuredPost.frontmatter.image && (
+            <div class="lg:col-span-2 order-1 lg:order-2">
+              <div class="aspect-[4/3] bg-[color:var(--muted)] rounded-lg overflow-hidden">
+                <img 
+                  src={featuredPost.frontmatter.image.url} 
+                  alt={featuredPost.frontmatter.title}
+                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+            </div>
+          )}
+        </article>
+      </section>
+    )}
+
+    <!-- Blog Series Sections -->
+    <section class="py-12">
+      <h2 class="text-2xl lg:text-3xl font-bold mb-8">From the Notebook</h2>
+      
+      {/* 1AM Thoughts */}
+      {seriesPosts['1am-thoughts'].length > 0 && (
+        <div class="mb-12">
+          <div class="flex items-center gap-4 mb-6">
+            <h3 class="text-xl font-semibold">🌙 1AM Thoughts</h3>
+            <span class="text-sm text-[color:var(--muted-foreground)]">Deep, unfiltered reflections</span>
+            <div class="flex-1 h-px bg-[color:var(--border)]"></div>
+            <a href="/tags/1am-thoughts" class="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">
+              View all →
+            </a>
+          </div>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {seriesPosts['1am-thoughts'].map(post => (
+              <article class="group">
+                <div class="border-l-2 border-[color:var(--border)] pl-4 hover:border-[color:var(--foreground)] transition-colors">
+                  <h4 class="font-medium mb-2 group-hover:text-[color:var(--muted-foreground)] transition-colors">
+                    <a href={post.url}>{post.frontmatter.title}</a>
+                  </h4>
+                  <p class="text-sm text-[color:var(--muted-foreground)] mb-2 line-clamp-2">
+                    {post.frontmatter.description}
+                  </p>
+                  <time class="text-xs text-[color:var(--muted-foreground)]">
+                    {new Date(post.frontmatter.pubDate).toLocaleDateString()}
+                  </time>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Code Diary */}
+      {seriesPosts['code-diary'].length > 0 && (
+        <div class="mb-12">
+          <div class="flex items-center gap-4 mb-6">
+            <h3 class="text-xl font-semibold">💻 Code Diary</h3>
+            <span class="text-sm text-[color:var(--muted-foreground)]">Learning & building in public</span>
+            <div class="flex-1 h-px bg-[color:var(--border)]"></div>
+            <a href="/tags/code-diary" class="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">
+              View all →
+            </a>
+          </div>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {seriesPosts['code-diary'].map(post => (
+              <article class="group">
+                <div class="border-l-2 border-[color:var(--border)] pl-4 hover:border-[color:var(--foreground)] transition-colors">
+                  <h4 class="font-medium mb-2 group-hover:text-[color:var(--muted-foreground)] transition-colors">
+                    <a href={post.url}>{post.frontmatter.title}</a>
+                  </h4>
+                  <p class="text-sm text-[color:var(--muted-foreground)] mb-2 line-clamp-2">
+                    {post.frontmatter.description}
+                  </p>
+                  <time class="text-xs text-[color:var(--muted-foreground)]">
+                    {new Date(post.frontmatter.pubDate).toLocaleDateString()}
+                  </time>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Week Notes */}
+      {seriesPosts['week-notes'].length > 0 && (
+        <div class="mb-12">
+          <div class="flex items-center gap-4 mb-6">
+            <h3 class="text-xl font-semibold">📝 Week Notes</h3>
+            <span class="text-sm text-[color:var(--muted-foreground)]">Weekly observations & discoveries</span>
+            <div class="flex-1 h-px bg-[color:var(--border)]"></div>
+            <a href="/tags/week-notes" class="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">
+              View all →
+            </a>
+          </div>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {seriesPosts['week-notes'].map(post => (
+              <article class="group">
+                <div class="border-l-2 border-[color:var(--border)] pl-4 hover:border-[color:var(--foreground)] transition-colors">
+                  <h4 class="font-medium mb-2 group-hover:text-[color:var(--muted-foreground)] transition-colors">
+                    <a href={post.url}>{post.frontmatter.title}</a>
+                  </h4>
+                  <p class="text-sm text-[color:var(--muted-foreground)] mb-2 line-clamp-2">
+                    {post.frontmatter.description}
+                  </p>
+                  <time class="text-xs text-[color:var(--muted-foreground)]">
+                    {new Date(post.frontmatter.pubDate).toLocaleDateString()}
+                  </time>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
+
+    <!-- Recent Posts -->
+    {recentPosts.length > 0 && (
+      <section class="py-12">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-2xl lg:text-3xl font-bold mb-2">Recent Posts</h2>
+            <div class="w-12 h-0.5 bg-[color:var(--border)]"></div>
+          </div>
+          <a href="/blog" class="text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">
+            All Posts →
+          </a>
+        </div>
+        
+        <div class="grid sm:grid-cols-2 lg:grid-cols-2 gap-6">
+          {recentPosts.map(post => (
+            <BlogPost 
+              url={post.url}
+              title={post.frontmatter.title}
+              description={post.frontmatter.description}
+              pubDate={post.frontmatter.pubDate}
+              image={post.frontmatter.image}
+              tags={post.frontmatter.tags}
+              readingTime={post.frontmatter.readingTime}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Tags Cloud -->
+    {popularTags.length > 0 && (
+      <section class="py-12">
+        <div class="mb-8">
+          <h2 class="text-2xl lg:text-3xl font-bold mb-2">Explore Topics</h2>
+          <div class="w-12 h-0.5 bg-[color:var(--border)]"></div>
+        </div>
+        
+        <div class="flex flex-wrap gap-2">
+          {popularTags.map(([tag, count]) => (
+            <a 
+              href={`/tags/${tag}`} 
+              class="inline-flex items-center gap-1 px-3 py-2 bg-[color:var(--card)] border border-[color:var(--border)] rounded-lg text-sm hover:bg-[color:var(--accent)] hover:border-[color:var(--foreground)] transition-all"
+            >
+              <span>#{tag}</span>
+              <span class="text-xs text-[color:var(--muted-foreground)]">({count})</span>
+            </a>
+          ))}
+        </div>
+        
+        <div class="mt-6 text-center">
+          <a href="/tags" class="inline-flex items-center text-[color:var(--muted-foreground)] hover:text-[color:var(--foreground)] transition-colors">
+            View all tags
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+            </svg>
+          </a>
+        </div>
+      </section>
+    )}
+
+    <!-- About/Connect -->
+    <section class="py-12 border-t border-[color:var(--border)]">
+      <div class="max-w-3xl">
+        <h2 class="text-2xl font-bold mb-4">Digital Notebook</h2>
+        <p class="text-[color:var(--muted-foreground)] leading-relaxed mb-6">
+          This is my corner of the internet where I document learnings, share thoughts, and explore ideas. 
+          From 1AM reflections to code experiments, politics to cycling adventures — it's all here, 
+          unfiltered and authentic.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a href="/about" class="text-[color:var(--foreground)] hover:text-[color:var(--muted-foreground)] transition-colors">
+            More about me →
+          </a>
+          <!-- <span class="text-[color:var(--border)]">•</span>
+          <a href="/now" class="text-[color:var(--foreground)] hover:text-[color:var(--muted-foreground)] transition-colors">
+            What I'm up to now →
+          </a> -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+</BaseLayout>

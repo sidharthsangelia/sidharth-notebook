@@ -1,0 +1,27 @@
+---
+import BlogPost from '../components/BlogPost.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const allPosts = Object
+  .values(import.meta.glob('./posts/*.md', { eager: true }))
+  .sort((a, b) => new Date(b.frontmatter.pubDate) - new Date(a.frontmatter.pubDate));
+
+const pageTitle = "My Blog";
+---
+<BaseLayout pageTitle={pageTitle}>
+  <p class="mb-6 text-[color:var(--muted-foreground)]">Sharing my thoughts, learnings, and experiments.</p>
+  
+  <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-2">
+    {allPosts.map(post => (
+      <BlogPost 
+        url={post.url}
+        title={post.frontmatter.title}
+        description={post.frontmatter.description}
+        pubDate={post.frontmatter.pubDate}
+        image={post.frontmatter.image}
+        tags={post.frontmatter.tags}
+        readingTime={post.frontmatter.readingTime}
+      />
+    ))}
+  </div>
+</BaseLayout>

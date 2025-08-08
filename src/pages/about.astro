@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const identity = {
+  firstName: "Sidharth",
+  country: "India",
+  occupation: "Student",
+  hobbies: ["cycling", "badminton", "book reading"],
+};
+
+const coreTopics = [
+  "1am-thoughts",
+  "week-notes",
+  "code-diary",
+  "life",
+  "politics",
+  "cycling",
+  "learning",
+  "projects",
+];
+---
+
+<BaseLayout >
+  <section class="prose prose-neutral dark:prose-invert max-w-2xl mx-auto px-4 sm:px-0">
+    <!-- Hero Intro -->
+    <h1 class="text-4xl font-bold tracking-tight mb-6">About Me</h1>
+
+    <p class="text-lg text-[color:var(--muted-foreground)] leading-relaxed">
+      Hey, I’m <span class="font-semibold">{identity.firstName}</span> — a {identity.occupation} from {identity.country}.
+      This site is my <span class="italic">digital notebook</span> where I share what’s on my mind —
+      from tech experiments and cycling logs to social reflections and unfiltered late-night thoughts.
+    </p>
+
+    <p>
+      Think of it as part personal journal, part small magazine — minimal in design, but hopefully rich in ideas.
+    </p>
+
+    <!-- Personal Touch -->
+    <h2 class="mt-12 text-2xl font-semibold">Beyond the Keyboard</h2>
+    <p>
+      When I’m not writing code, you’ll find me {identity.hobbies[0]}, enjoying a game of {identity.hobbies[1]},
+      or {identity.hobbies[2]}. I believe in slow growth, meaningful work, and taking the time to understand
+      things deeply.
+    </p>
+
+    <!-- Why This Blog -->
+    <h2 class="mt-12 text-2xl font-semibold">Why This Blog Exists</h2>
+    <p>
+      I wanted a space free from the noise of social media — no ads, no pop-ups, no endless notifications.
+      Just words, ideas, and the occasional photo.  
+      Here, I write to remember, to learn in public, and to connect with anyone curious enough to read.
+    </p>
+
+
+    <!-- Closing -->
+    <p class="mt-12 text-sm text-[color:var(--muted-foreground)]">
+      Thanks for stopping by. Feel free to wander — you might just find something worth your time.
+    </p>
+  </section>
+</BaseLayout>

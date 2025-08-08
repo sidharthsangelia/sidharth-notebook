@@ -1,0 +1,37 @@
+---
+const socials = [
+  {
+    name: "GitHub",
+    url: "https://github.com/sidharthsangelia",
+    icon: "/github.png",
+  },
+  {
+    name: "Instagram",
+    url: "https://instagram.com/sidharth_sangelia",
+    icon: "/instagram.png",
+  },
+  {
+    name: "LinkedIn",
+    url: "https://linkedin.com/in/sidharth-sangelia",
+    icon: "/linkedin.png",
+  },
+];
+---
+
+<nav aria-label="Social media links" class="flex justify-center gap-4 mt-12">
+  {socials.map(({ name, url, icon }) => (
+    <a
+      href={url}
+      aria-label={name}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="group flex items-center justify-center w-9 h-9 rounded-full border border-[color:var(--border)] transition-colors duration-300 hover:border-[color:var(--foreground)]"
+    >
+      <img
+        src={icon}
+        alt=""
+        class="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity"
+      />
+    </a>
+  ))}
+</nav>
