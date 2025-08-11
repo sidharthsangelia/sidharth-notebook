@@ -1,16 +1,23 @@
 ---
-const allPosts = Object.values(
-  import.meta.glob('../*.md', { eager: true })
-);
+export async function getStaticPaths() {
+  const files = import.meta.glob('../*.md', { eager: true });
 
-const { slug } = Astro.params;
+  return Object.entries(files).map(([filePath, post]) => {
+    // Extract the filename without extension
+    const slug = filePath
+      .split('/')
+      .pop()
+      .replace(/\.md$/, '');
 
-const post = allPosts.find((p) => p.frontmatter.slug === slug);
-
-if (!post) {
-  throw new Error(`Post not found for slug: ${slug}`);
+    return {
+      params: { slug },
+      props: { post }
+    };
+  });
 }
 
+const { slug } = Astro.params;
+const { post } = Astro.props;
 const { Content, frontmatter } = post;
 ---
 
