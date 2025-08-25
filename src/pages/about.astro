@@ -21,19 +21,32 @@ const coreTopics = [
 ---
 
 <BaseLayout title="Sidharth's Notebook | About">
-  <section class="prose prose-neutral dark:prose-invert max-w-2xl mx-auto px-4 sm:px-0">
+  <section class="prose prose-neutral dark:prose-invert max-w-3xl mx-auto px-4 sm:px-0">
     <!-- Hero Intro -->
     <h1 class="text-4xl font-bold tracking-tight mb-6">About Me</h1>
 
-    <p class="text-lg text-[color:var(--muted-foreground)] leading-relaxed">
-      Hey, I’m <span class="font-semibold">{identity.firstName}</span> — a {identity.occupation} from {identity.country}.
-      This site is my <span class="italic">digital notebook</span> where I share what’s on my mind —
-      from tech experiments and cycling logs to social reflections and unfiltered late-night thoughts.
-    </p>
+    <!-- Newspaper style layout -->
+    <div class="flex flex-col sm:flex-row items-start gap-6 mb-8">
+      <!-- Image -->
+      <img 
+        src="https://www.thesidharth.com/image.png" 
+        alt="Sidharth's photo" 
+        class="w-55 h-55 object-cover rounded shadow-md sm:float-left sm:mr-6"
+      />
 
-    <p>
-      Think of it as part personal journal, part small magazine — minimal in design, but hopefully rich in ideas.
-    </p>
+      <!-- Intro text -->
+      <div>
+        <p class="text-lg text-[color:var(--muted-foreground)] leading-relaxed">
+          Hey, I’m <span class="font-semibold">{identity.firstName}</span> — a {identity.occupation} from {identity.country}.
+          This site is my <span class="italic">digital notebook</span> where I share what’s on my mind —
+          from tech experiments and cycling logs to social reflections and unfiltered late-night thoughts.
+        </p>
+
+        <p>
+          Think of it as part personal journal, part small magazine — minimal in design, but hopefully rich in ideas.
+        </p>
+      </div>
+    </div>
 
     <!-- Personal Touch -->
     <h2 class="mt-12 text-2xl font-semibold">Beyond the Keyboard</h2>
@@ -50,7 +63,6 @@ const coreTopics = [
       Just words, ideas, and the occasional photo.  
       Here, I write to remember, to learn in public, and to connect with anyone curious enough to read.
     </p>
-
 
     <!-- Closing -->
     <p class="mt-12 text-sm text-[color:var(--muted-foreground)]">
