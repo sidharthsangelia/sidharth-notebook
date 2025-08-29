@@ -7,7 +7,7 @@ author: "Sidharth"
 category: ""
 tags: ["React Native"]
 image:
-  url: "public/web-to-mobile.png"
+  url: "/web-to-mobile.png"
   alt: "react native app dev"
 readingTime: "4 min"
 ---
