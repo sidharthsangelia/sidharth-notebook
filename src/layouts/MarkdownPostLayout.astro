@@ -1,6 +1,6 @@
 ---
-import BaseLayout from './BaseLayout.astro';
-import BlogPost from '../components/BlogPost.astro';
+import BaseLayout from "./BaseLayout.astro";
+import BlogPost from "../components/BlogPost.astro";
 
 interface BlogPostFrontmatter {
   title: string;
@@ -19,7 +19,7 @@ const { frontmatter, url } = Astro.props as {
 };
 
 const allPosts = Object.values(
-  import.meta.glob<any>('../pages/blog/posts/*.md', { eager: true })
+  import.meta.glob<any>("../pages/blog/posts/*.md", { eager: true })
 );
 
 const relatedPosts = allPosts
@@ -30,220 +30,174 @@ const relatedPosts = allPosts
       p.frontmatter.category === frontmatter.category
   )
   .slice(0, 3);
+
+// Dynamic OG Image URL (using Satori/og-image service or custom endpoint)
+// You can replace this with your own image generator if you want better styling
+const ogImageUrl = `/api/og?title=${encodeURIComponent(frontmatter.title)}&author=${encodeURIComponent(frontmatter.author)}&readingTime=${encodeURIComponent(frontmatter.readingTime ?? "")}&image=${encodeURIComponent(frontmatter.image?.url ?? "")}`;
 ---
 
 <BaseLayout>
-  <article class="container">
-    {frontmatter.category && (
-      <span class="badge">{frontmatter.category}</span>
-    )}
+  <head>
+    <!-- Basic SEO -->
+    <title>{frontmatter.title}</title>
+    <meta name="description" content={frontmatter.description ?? ""} />
+    <meta name="author" content={frontmatter.author} />
+    <link rel="canonical" href={Astro.site + url} />
 
-    <h1 class="title">{frontmatter.title}</h1>
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={frontmatter.title} />
+    <meta property="og:description" content={frontmatter.description ?? ""} />
+    <meta property="og:url" content={Astro.site + url} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta
+      property="og:image:alt"
+      content={frontmatter.image?.alt ?? frontmatter.title}
+    />
 
-    {frontmatter.description && (
-      <p class="description">{frontmatter.description}</p>
-    )}
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={frontmatter.title} />
+    <meta name="twitter:description" content={frontmatter.description ?? ""} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta
+      name="twitter:image:alt"
+      content={frontmatter.image?.alt ?? frontmatter.title}
+    />
 
-    <div class="meta">
-      <span class="author">{frontmatter.author}</span>
-      <time datetime={frontmatter.pubDate}>
-        {new Date(frontmatter.pubDate).toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-        })}
+    <!-- Extra metadata -->
+    <meta property="article:published_time" content={frontmatter.pubDate} />
+    <meta property="article:author" content={frontmatter.author} />
+    {
+      frontmatter.tags?.map((tag) => (
+        <meta property="article:tag" content={tag} />
+      ))
+    }
+  </head>
+
+  <article class="max-w-4xl mx-auto px-5 py-12">
+    {
+      frontmatter.category && (
+        <span class="inline-block text-xs px-3 py-1 rounded-lg bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 mb-4 font-medium">
+          {frontmatter.category}
+        </span>
+      )
+    }
+
+    <h1
+      class="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 leading-tight tracking-tight text-gray-900 dark:text-white"
+    >
+      {frontmatter.title}
+    </h1>
+
+    {
+      frontmatter.description && (
+        <p class="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-7 leading-relaxed max-w-4xl">
+          {frontmatter.description}
+        </p>
+      )
+    }
+
+    <div
+      class="flex flex-wrap items-center gap-5 text-sm text-gray-500 dark:text-gray-400 mb-9 border-b border-gray-200 dark:border-gray-700 pb-6"
+    >
+      <span class="font-medium text-gray-700 dark:text-gray-300"
+        >{frontmatter.author}</span
+      >
+      <time datetime={frontmatter.pubDate} class="flex items-center gap-1">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fill-rule="evenodd"
+            d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+            clip-rule="evenodd"></path>
+        </svg>
+        {
+          new Date(frontmatter.pubDate).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        }
       </time>
-      {frontmatter.readingTime && (
-        <span>{frontmatter.readingTime} min read</span>
-      )}
+      {
+        frontmatter.readingTime && (
+          <span class="flex items-center gap-1">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            {frontmatter.readingTime} min read
+          </span>
+        )
+      }
     </div>
 
-    {frontmatter.image?.url && (
-      <figure class="featured-wrapper">
-        <img
-          src={frontmatter.image.url}
-          alt={frontmatter.image.alt ?? frontmatter.title}
-          class="featured"
-          loading="lazy"
-        />
-      </figure>
-    )}
+    {
+      frontmatter.image?.url && (
+        <figure class="mb-10">
+          <img
+            src={frontmatter.image.url}
+            alt={frontmatter.image.alt ?? frontmatter.title}
+            class="w-full rounded-xl object-cover shadow-lg transition-transform duration-300 hover:scale-[1.02] hover:shadow-xl"
+            loading="lazy"
+          />
+        </figure>
+      )
+    }
 
-    <div class="content">
+    <div
+      class="prose prose-lg prose-gray dark:prose-invert max-w-none
+                prose-headings:font-semibold prose-headings:tracking-tight
+                prose-h1:text-4xl prose-h1:mb-4 prose-h1:mt-8
+                prose-h2:text-3xl prose-h2:mb-3 prose-h2:mt-8
+                prose-h3:text-2xl prose-h3:mb-2 prose-h3:mt-6
+                prose-h4:text-xl prose-h4:mb-2 prose-h4:mt-4
+                prose-p:mb-6 prose-p:leading-relaxed
+                prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline dark:prose-a:text-blue-400
+                prose-strong:font-semibold prose-strong:text-gray-900 dark:prose-strong:text-white
+                prose-code:text-sm prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded dark:prose-code:bg-gray-800
+                prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-gray-700
+                prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600 dark:prose-blockquote:text-gray-400
+                prose-ul:mb-6 prose-ol:mb-6 prose-li:mb-2
+                prose-img:rounded-lg prose-img:shadow-md
+                prose-hr:border-gray-200 dark:prose-hr:border-gray-700 prose-hr:my-8"
+    >
       <slot />
     </div>
 
-    {frontmatter.tags?.length > 0 && (
-      <div class="tags">
-        {frontmatter.tags.map((tag) => (
-          <a href={`/tags/${tag}`} class="tag">#{tag}</a>
-        ))}
-      </div>
-    )}
+    {
+      frontmatter.tags?.length > 0 && (
+        <div class="mt-10 pt-8 border-t border-gray-200 dark:border-gray-700">
+          <div class="flex flex-wrap gap-2">
+            {frontmatter.tags.map((tag) => (
+              <a
+                href={`/tags/${tag}`}
+                class="inline-flex items-center px-3 py-1 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-800 dark:text-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 dark:hover:text-white rounded-full transition-colors duration-200"
+              >
+                #{tag}
+              </a>
+            ))}
+          </div>
+        </div>
+      )
+    }
   </article>
 
-  {relatedPosts.length > 0 && (
-    <section class="related">
-      <h2>Continue Reading</h2>
-      <div class="grid">
-        {relatedPosts.map((post) => (
-          <BlogPost {...post.frontmatter} url={post.url} />
-        ))}
-      </div>
-    </section>
-  )}
-
-  <style>
-    :root {
-      --radius: 8px;
-    }
-
-    .container {
-      max-width: 760px;
-      margin: auto;
-      padding: 3rem 1.25rem;
-      color: var(--foreground);
-      background: var(--background);
-    }
-
-    .badge {
-      display: inline-block;
-      font-size: 0.75rem;
-      padding: 0.25rem 0.75rem;
-      border-radius: var(--radius);
-      background: var(--accent);
-      color: var(--accent-foreground);
-      opacity: 0.9;
-    }
-
-    .title {
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 700;
-      margin: 1rem 0 0.75rem;
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-    }
-
-    .description {
-      color: var(--muted-foreground);
-      margin-bottom: 1.75rem;
-      font-size: 1.15rem;
-      line-height: 1.6;
-      max-width: 90%;
-    }
-
-    .meta {
-      font-size: 0.875rem;
-      color: var(--muted-foreground);
-      display: flex;
-      gap: 1.25rem;
-      flex-wrap: wrap;
-      margin-bottom: 2.25rem;
-    }
-
-    .author {
-      font-weight: 500;
-    }
-
-    .featured-wrapper {
-      margin: 2rem 0;
-    }
-
-    .featured {
-      width: 100%;
-      border-radius: var(--radius);
-      object-fit: cover;
-      transition: transform 0.4s ease, filter 0.4s ease;
-    }
-
-    .featured:hover {
-      transform: scale(1.02);
-      filter: brightness(1.03);
-    }
-
-    .content {
-      font-size: 1.125rem;
-      line-height: 1.85;
-    }
-
-    .content :global(h2) {
-      font-size: 1.6rem;
-      margin-top: 2.5rem;
-      margin-bottom: 1rem;
-      font-weight: 600;
-    }
-
-    .content :global(h3) {
-      font-size: 1.3rem;
-      margin-top: 2rem;
-      margin-bottom: 0.75rem;
-      font-weight: 600;
-    }
-
-    .content :global(a) {
-      color: var(--primary);
-      font-weight: 500;
-      text-decoration: none;
-      border-bottom: 1px dashed var(--primary);
-      transition: border-color 0.2s ease, color 0.2s ease;
-    }
-
-    .content :global(a:hover) {
-      color: var(--foreground);
-      border-color: var(--foreground);
-    }
-
-    .content :global(blockquote) {
-      border-left: 3px solid var(--primary);
-      padding-left: 1rem;
-      font-style: italic;
-      color: var(--muted-foreground);
-      margin: 1.5rem 0;
-    }
-
-    .tags {
-      margin-top: 2.5rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .tag {
-      font-size: 0.85rem;
-      padding: 0.3rem 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      background: var(--card);
-      color: var(--foreground);
-      transition: background 0.25s ease, border-color 0.25s ease;
-    }
-
-    .tag:hover {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: var(--accent-foreground);
-    }
-
-    .related {
-      max-width: 960px;
-      margin: 4rem auto;
-      padding: 0 1.25rem;
-    }
-
-    .related h2 {
-      text-align: center;
-      font-size: 1.75rem;
-      margin-bottom: 2rem;
-    }
-
-    .grid {
-      display: grid;
-      gap: 1.5rem;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    }
-
-    * {
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    }
-  </style>
+  {
+    relatedPosts.length > 0 && (
+      <section class="max-w-6xl mx-auto px-5 py-16 border-t border-gray-200 dark:border-gray-700">
+        <h2 class="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+          Continue Reading
+        </h2>
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {relatedPosts.map((post) => (
+            <BlogPost {...post.frontmatter} url={post.url} />
+          ))}
+        </div>
+      </section>
+    )
+  }
 </BaseLayout>
