@@ -9,7 +9,7 @@ interface BlogPostFrontmatter {
   author: string;
   image?: { url: string; alt?: string };
   tags?: string[];
-  readingTime?: number;
+  readingTime?: string | number;
   category?: string;
 }
 
@@ -32,6 +32,9 @@ const relatedPosts = allPosts
   .slice(0, 3);
 
 const ogImageUrl = frontmatter.image?.url
+  ? new URL(frontmatter.image.url, Astro.site).toString()
+  : undefined;
+
 
 ---
 
