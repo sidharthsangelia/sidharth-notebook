@@ -31,9 +31,8 @@ const relatedPosts = allPosts
   )
   .slice(0, 3);
 
-// Dynamic OG Image URL (using Satori/og-image service or custom endpoint)
-// You can replace this with your own image generator if you want better styling
-const ogImageUrl = `/api/og?title=${encodeURIComponent(frontmatter.title)}&author=${encodeURIComponent(frontmatter.author)}&readingTime=${encodeURIComponent(frontmatter.readingTime ?? "")}&image=${encodeURIComponent(frontmatter.image?.url ?? "")}`;
+const ogImageUrl = frontmatter.image?.url
+
 ---
 
 <BaseLayout>

@@ -9,6 +9,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   site: "https://sidharth-notebook.vercel.app",
   output: 'static',
+  
   integrations: [preact(),sitemap()],
 
   vite: {
