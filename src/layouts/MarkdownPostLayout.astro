@@ -31,11 +31,29 @@ const relatedPosts = allPosts
   )
   .slice(0, 3);
 
-const ogImageUrl = frontmatter.image?.url
-  ? new URL(frontmatter.image.url, Astro.site).toString()
-  : undefined;
+// Improved OG image handling
+const getOgImageUrl = () => {
+  if (frontmatter.image?.url) {
+    // Handle both relative and absolute URLs
+    if (frontmatter.image.url.startsWith('http')) {
+      return frontmatter.image.url;
+    }
+    // Ensure Astro.site is defined, fallback to current origin in browser
+    const baseUrl = Astro.site || new URL(Astro.request.url).origin;
+    return new URL(frontmatter.image.url, baseUrl).toString();
+  }
+  
+  // Fallback to a default OG image
+  const baseUrl = Astro.site || new URL(Astro.request.url).origin;
+  return new URL('/og-default.png', baseUrl).toString(); // Make sure this exists!
+};
 
+const ogImageUrl = getOgImageUrl();
 
+// Canonical URL with proper fallback
+const canonicalUrl = Astro.site 
+  ? new URL(url, Astro.site).toString()
+  : new URL(url, Astro.request.url).toString();
 ---
 
 <BaseLayout>
@@ -44,18 +62,21 @@ const ogImageUrl = frontmatter.image?.url
     <title>{frontmatter.title}</title>
     <meta name="description" content={frontmatter.description ?? ""} />
     <meta name="author" content={frontmatter.author} />
-    <link rel="canonical" href={Astro.site + url} />
+    <link rel="canonical" href={canonicalUrl} />
 
     <!-- Open Graph -->
     <meta property="og:type" content="article" />
     <meta property="og:title" content={frontmatter.title} />
     <meta property="og:description" content={frontmatter.description ?? ""} />
-    <meta property="og:url" content={Astro.site + url} />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
       content={frontmatter.image?.alt ?? frontmatter.title}
     />
+    <meta property="og:site_name" content="Your Blog Name" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -66,6 +87,7 @@ const ogImageUrl = frontmatter.image?.url
       name="twitter:image:alt"
       content={frontmatter.image?.alt ?? frontmatter.title}
     />
+    <meta name="twitter:creator" content="@yourtwitterhandle" />
 
     <!-- Extra metadata -->
     <meta property="article:published_time" content={frontmatter.pubDate} />
@@ -75,6 +97,9 @@ const ogImageUrl = frontmatter.image?.url
         <meta property="article:tag" content={tag} />
       ))
     }
+
+    <!-- Debug info (remove in production) -->
+    <!-- <meta name="debug:og-image" content={ogImageUrl} /> -->
   </head>
 
   <article class="max-w-4xl mx-auto px-5 py-12">
