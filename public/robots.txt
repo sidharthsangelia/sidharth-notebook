@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sidharth-notebook.vercel.app/sitemap-index.xml
+Sitemap: https://notebook.thesidharth.com/sitemap-index.xml

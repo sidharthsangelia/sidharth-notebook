@@ -7,7 +7,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://sidharth-notebook.vercel.app",
+  site: "https://notebook.thesidharth.com/",
   output: 'static',
   
   integrations: [preact(),sitemap()],
